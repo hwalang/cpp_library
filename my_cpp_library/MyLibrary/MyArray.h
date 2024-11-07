@@ -1,39 +1,31 @@
-﻿#pragma once // .cpp파일에 여러 번 include 되지 않도록 하는 include guard
+#pragma once
+#include <cstddef>
+#include <algorithm>
 
-// Integer에 대한 std::array를 먼저 구현한다.
+template <class T, std::size_t N>
 class MyArray {
 public:
-  /* == == == == = Implicitly-defined Member Functions == == == == == == */
-  MyArray();
-  ~MyArray();
-  // copy constructor: operator=
+  using value_type = T;
+  using size_type = std::size_t;
 
-  /* == == == == = Element Access == == == == == == */
-  int at(int pos) const;
-  int operator[](int pos);
-  const int operator[](int pos) const;
-  int front();
-  const int front() const;
-  int back();
-  const int back() const;
-  int* data() noexcept;
-  const int* data() const noexcept;
+public:
+  MyArray(){};
+  MyArray(const MyArray& other) {
+    std::copy(other._array, other._array + N, _array);
+  }
+  MyArray(MyArray&& other) {
+    std::move(other._array, other._array + N, _array);
+  }
 
-  /* == == == == = Capacity == == == == == == */
-  constexpr bool empty() const noexcept;
-  constexpr int size() const noexcept;
+  MyArray& operator=(const MyArray& other) {
+    if (this == &other)
+      return *this;
 
-  /* == == == == = Operations == == == == == == */
-  void fill(const int& value);
-  void swap(MyArray& other) noexcept;
-
-  /* == == == == = Non-member Functions == == == == == == */
-  // operator overload ( ==, !=, <, <=, >, >=, <=> )
-  int& get(MyArray& a) noexcept;
-  int&& get(MyArray&& a) noexcept;
-  const int& get(const MyArray& a) noexcept;
-  const int&& get(const MyArray&& a) noexcept;
+    std::copy(other._array, other._array + N, _array);
+    return *this;
+  }
 
 private:
-
+  value_type _array[N];
+  // size_type _size = N ? N : 1;
 };
