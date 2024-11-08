@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <cstddef>
 #include <algorithm>
 
@@ -9,13 +10,26 @@ public:
   using size_type = std::size_t;
 
 public:
-  MyArray(){};
+  MyArray() : _array{} { 
+    std::cout << "call MyArray(): ";
+    for (int i = 0; i < N; ++i) {
+      std::cout << _array[i] << " ";
+    }
+    std::cout << '\n';
+  };
   MyArray(const MyArray& other) {
+    std::cout << "call MyArray(const MyArray& other)" << '\n';
     std::copy(other._array, other._array + N, _array);
   }
   MyArray(MyArray&& other) {
+    std::cout << "call MyArray(MyArray&& other)" << '\n';
     std::move(other._array, other._array + N, _array);
   }
+  ~MyArray() {
+    std::cout << "call ~MyArray()" << '\n';
+  }
+
+  /*---------------------------------------------------------------*/
 
   MyArray& operator=(const MyArray& other) {
     if (this == &other)
@@ -24,6 +38,9 @@ public:
     std::copy(other._array, other._array + N, _array);
     return *this;
   }
+
+  value_type& operator[](size_type pos) { return _array[pos]; }
+  constexpr size_type size() const noexcept { return N; }
 
 private:
   value_type _array[N];
