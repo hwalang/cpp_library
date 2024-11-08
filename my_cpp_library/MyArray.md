@@ -70,7 +70,7 @@ std::copy(other._array, other._array + other._size, _array);
 ```
 처음에 이러한 사실을 몰라서 크기를 비교하고 이에 따라 새로운 배열을 생성했다.   
 
-#### 2.3.2. Access Operator
+#### 2.3.2. Subscript Operator
 ```cpp
 value_type& operator[](size_type pos) { return _array[pos]; }
 ```
