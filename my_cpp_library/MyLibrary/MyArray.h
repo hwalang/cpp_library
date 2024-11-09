@@ -40,9 +40,13 @@ public:
   }
 
   value_type& operator[](size_type pos) { return _array[pos]; }
+
+  /*---------------------------------------------------------------*/
+
+  constexpr bool empty() const noexcept { return N == 0; }
   constexpr size_type size() const noexcept { return N; }
+  
 
 private:
   value_type _array[N];
-  // size_type _size = N ? N : 1;
 };
