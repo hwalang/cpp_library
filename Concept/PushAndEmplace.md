@@ -28,7 +28,7 @@ vec.push_back(std::move(str));
 <br>
 
 ## Emplace
-`Container 내부에서 직접 객체를 생성`한다.   
+`Container 내부( in-place )에서 직접 객체를 생성`한다.   
 객체 생성에 필요한 arguments를 직접 전달하여 container 내부에서 객체가 생성된다. 이를 통해 불필요한 복사나 이동을 피할 수 있다.   
 ```cpp
 std::vector<std::string> vec;
