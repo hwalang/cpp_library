@@ -28,8 +28,8 @@ MyArray(MyArray&& other) {
 ```
 default constructor에서 T의 TYPE에 따라 default value로 초기화한다.   
 T가 class type이라면 각 요소의 default consructor가 자동으로 호출되지만, primitive type이라면 각 요소들이 초기화되지 않아서 garbage value을 가진다.   
-이 문제점은 Value Initialization을 이용해서 해결했다.   
-`: _array()`는 _array를 value initialization하며, class type은 default consructor를 호출하고 primitive type은 각 elements가 0으로 초기화한다.   
+이 문제점은 [Value Initialization](/Concept/ValueInitialization.md)을 이용해서 해결했다.   
+`: _array{}`는 _array를 value initialization하며, class type은 default consructor를 호출하고 primitive type은 각 elements가 0으로 초기화한다.   
 
 
 
@@ -75,7 +75,15 @@ std::copy(other._array, other._array + other._size, _array);
 value_type& operator[](size_type pos) { return _array[pos]; }
 ```
 
+<br>
 
+### 2.4. Capacity
+```cpp
+constexpr bool empty() const noexcept { return N == 0; }
+constexpr size_type size() const noexcept { return N; }
+```
+변수 N의 TYPE은 `std::size_t`고, `typedef unsigned long long`를 나타내기 때문에 양수 값만 가진다.   
+이 점을 이용해서 emtpy()는 N == 0이면 true를 반환했다.   
 
 <br>
 
