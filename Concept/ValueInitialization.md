@@ -17,7 +17,7 @@
 [ cppreference - Value-initialization ](https://en.cppreference.com/w/cpp/language/value_initialization)   
 # Value Initialization
 This is the initialization performed when an object is constructed with an empty initializer.   
-C++에서 object를 생성하는 초기화 방법 중 하나로, object의 모든 member variables가 적절하게 초기화되도록 보장한다.   
+`C++에서 object를 생성하는 초기화 방법 중 하나`로, object의 모든 member variables가 적절하게 초기화되도록 보장한다.   
 
 ## Value-Initialization is Performed in these situations
 
