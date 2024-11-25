@@ -8,7 +8,7 @@
 
 # Inheritance
 ## 1. Base-Derived
-c++은 부모-자식 클래스라는 용어보다 기반-파생 클래스라 부르는 것이 좋다.   
+c++은 부모-자식 클래스라는 용어보다 기반-파생 클래스라 부르는 것이 적합하다고 생각   
 c++은 한 명의 부모만 있는 것이 아니라 여러 개의 기반을 가질 수 있기 때문이다.   
 ```cpp
 class Base {
@@ -28,12 +28,14 @@ public:
   // Base class의 default constructor가 호출된다.
   Derived() : Base(), s("파생") {
     std::cout << "파생 클래스" << std::endl;
-  }
 
-  // Base의 what()을 호출
-  what();
+    // Base의 what()을 호출
+    what();
+  }
 };
 ```
+`Derived class의 생성자를 호출하면, Base class의 생성자가 먼저 호출`된다.   
+
 ![alt text](Images/Inheritance/Base_Derived_structure.png)   
 ```cpp
 int main() {
@@ -45,8 +47,7 @@ int main() {
 파생 클래스
 기반
 ```
-Derived 생성자를 호출하면 Base 생성자가 먼저 호출된다.   
-여기서 `Derived 내부에서 what()을 호출했는데 "기반"이 출력된 이유`에 주목한다.   
+여기서 `Derived 생성자 내부에서 what()을 호출했는데 "기반"이 출력된 이유`에 주목한다.   
 what() 함수는 Base에 정의했기 때문에 Derived의 s가 아니라 Base의 s를 출력하여 "기반"이 나온다.   
 ```cpp
 Derived() : Base(), s("파생") {
