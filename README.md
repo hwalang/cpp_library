@@ -2,15 +2,20 @@
 This repository is for documenting my C++ learning.   
 
 # Concept
-[C++ Concept](Concept/)   
 I organize concepts related to C++.   
 
-- [constexpr](Concept/Constexpr.md)
 - [inheritance](Concept/Inheritance.md)
   - Base-Derived 관계
   - overriding
   - Access Specifier Inheritance
-  - [virtual](Concept/Virtual.md)
+- [Polymorphism](Concept/Polymorphism.md)
+  - Upcasting
+  - Downcasting( dynamic_cast<> )
+  - virtual
+    - Dynamic Binding
+    - override keyword
+---
+- [constexpr](Concept/Constexpr.md)
 - [#pragma once](Concept/PragmaOnce.md)
 - [operator overloading](Concept/OperatorOverloading.md)
 ---
