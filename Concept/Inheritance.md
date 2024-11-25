@@ -1,6 +1,8 @@
 - [Inheritance](#inheritance)
   - [1. Base-Derived](#1-base-derived)
   - [2. Access Specifier를 사용한 Inheritance](#2-access-specifier를-사용한-inheritance)
+  - [3. Multiple Inheritance](#3-multiple-inheritance)
+  - [4. Diamond Inheritance](#4-diamond-inheritance)
 
 <br><br>
 
@@ -88,3 +90,44 @@ int main() {
 }
 ```
 Base 객체에서 parent_string에 접근하면 public을 사용하기 때문에 main()에서 접근할 수 있지만, `Derived 객체에서 parent_string에 접근하려하면, private 상속으로 인해 접근할 수 없다`.   
+
+## 3. Multiple Inheritance
+하나의 class가 다른 여러 개의 class들을 상속 받는 것을 허용한다.   
+그렇다면 `c instance의 생성자를 호출하면 base class의 호출 순서는 어떻게 될까?`   
+```cpp
+class A {
+public:
+  int a;
+  A() { std::cout << "A 생성자 호출" << std::endl; }
+};
+
+class B {
+public:
+  int b;
+  B() { std::cout << "B 생성자 호출" << std::endl; }
+};
+
+class C : public A, public B {
+public:
+  int c;
+  C() : A(), B() { std::cout << "C 생성자 호출" << std::endl; }
+};
+```
+이는 생성자의 초기화 리스트 순서가 아닌 상속 순서에 맞춰서 호출된다.   
+```cpp
+class C : public A, public B {} // A, B, C
+class C : public B, public A {} // B, A, C
+```
+
+## 4. Diamond Inheritance
+Multiple Inheritance를 허용함으로써 발생하는 문제를 나타낸다.   
+![alt text](Images/Inheritance/Diamond_Inheritance.png)   
+Me class는 HandsomeHuman과 SmartHuman class를 상속 받는다. 이처럼 `상속되는 두 개의 class가 공통의 Base class를 포함하고 있는 형태`를 Diamond Inheritance라고 부른다.   
+
+만약 Human class에 `name`이라는 멤버 변수가 있으면, HandsomeHuman과 SmartHuman에도 같은 변수가 존재한다. 그러면 Me에서 name에 접근하면 `두 클래스에 같은 변수가 존재하기 때문에 변수가 겹치는 상황이 발생하여 compile error가 발생`한다.   
+```cpp
+class HandsomeHuman : public virtual Human {};
+class SmartHuman : public virtual Human {};
+class Me : public HandsomeHuman, public SmartHuman {};
+```
+`Human을 virtual로 상속 받으면 Me에서 Multiple Inheritance 상황에서도 compiler가 언제나 Human을 한 번만 포함하도록 지정`한다.   

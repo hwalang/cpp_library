@@ -8,6 +8,8 @@ I organize concepts related to C++.
   - Base-Derived 관계
   - overriding
   - Access Specifier Inheritance
+  - Multiple Inheritance
+  - Diamond Inheritance
 - [Polymorphism](Concept/Polymorphism.md)
   - Upcasting
   - Downcasting( dynamic_cast<> )
