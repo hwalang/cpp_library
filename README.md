@@ -14,6 +14,9 @@ I organize concepts related to C++.
   - virtual
     - Dynamic Binding
     - override keyword
+    - virtual destructor
+    - virtual function 작동 원리
+    - pure virtual function과 abstract class
 ---
 - [constexpr](Concept/Constexpr.md)
 - [#pragma once](Concept/PragmaOnce.md)

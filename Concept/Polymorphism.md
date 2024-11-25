@@ -6,11 +6,17 @@
     - [Dynamic binding](#dynamic-binding)
     - [override keyword](#override-keyword)
     - [EmployeeList 문제 해결](#employeelist-문제-해결)
+    - [virtual destructor](#virtual-destructor)
+    - [virtual function의 구현 원리](#virtual-function의-구현-원리)
+    - [pure virtual function과 abstract class](#pure-virtual-function과-abstract-class)
+      - [abstract class 특징 1](#abstract-class-특징-1)
+      - [abstract class 특징 2](#abstract-class-특징-2)
 
 <br><br>
 
 [ virtual과 polymorphism - 씹어먹는 c++ ](https://modoocode.com/210)   
 해당 링크에서 inheritance의 `is-a`와 `has-a` 관계에 대해 정독하는 것을 추천한다.   
+[ virtual function과 inheritance - 씹어먹는 c++ ](https://modoocode.com/211)   
 
 # Polymorphism
 Downcasting을 통해 Base*가 가리키는 객체가 Base인지, Derived인지에 따라 다르게 동작한다.   
@@ -247,3 +253,128 @@ class Manager : public Employee {
 };
 ```
 employee_list[i]가 Employee*를 가리켜도 해당 포인터가 Manager 객체라면 Manager Function을, Employee라면 Employee Function을 호출한다.   
+
+### virtual destructor
+`inheritance 시에 destructor를 virtual function으로 만들어야 한다`.   
+```cpp
+class Parent {
+public:
+  Parent() { std::cout << "Parent 생성자 호출" << std::endl; }
+  ~Parent() { std::cout << "Parent 소멸자 호출" << std::endl; }
+};
+
+class Child : public Parent {
+public:
+  Child() : Parent() { std::cout << "Child 생성자 호출" << std::endl; }
+  ~Child() { std::cout << "Child 소멸자 호출" << std::endl; }
+};
+```
+```cpp
+int main() {
+  std::cout << "--- 평범한 Child 만들었을 때 ---" << std::endl;
+  { 
+    Child c; 
+  }
+
+  std::cout << "--- Parent 포인터로 Child 가리켰을 때 ---" << std::endl;
+  {
+    Parent *p = new Child();
+    delete p;
+  }
+}
+```
+```
+--- 평범한 Child 만들었을 때 ---
+Parent 생성자 호출
+Child 생성자 호출
+Child 소멸자 호출
+Parent 소멸자 호출
+--- Parent 포인터로 Child 가리켰을 때 ---
+Parent 생성자 호출
+Child 생성자 호출
+Parent 소멸자 호출
+```
+Downcasting으로 Parent*가 Child 객체를 가리키는데, 이러한 포인터가 소멸할 때는 Child 소멸자가 호출되지 않는다.   
+이러면 Child 객체의 모든 메모리를 제거하지 못하기 때문에 `memory leak`가 발생한다.   
+```cpp
+virtual ~Parent() { std::cout << "Parent 소멸자 호출" << std::endl; }
+```
+따라서 `Base의 소멸자를 virtual function으로 지정함으로써 Downcasting 시에 발생하는 memory leak를 방지`한다.   
+`~Child()`를 호출하면서, Child 소멸자가 알아서 Parent 소멸자도 호출하기 때문이다. 이는 Child 자신이 Parent를 상속받는다는 것을 알고 있기 때문이다.   
+
+### virtual function의 구현 원리
+모든 함수를 virtual function으로 만들면 어떨까?   
+JAVA는 모든 함수들을 기본적으로 virtual 함수로 선언한다. c++은 왜 virtual keyword를 사용해야 dynamic binding이 수행될까?   
+
+`virtual function을 사용하면 약간의 overhead가 발생하기 때문`이다.   
+```cpp
+class Parent {
+public:
+  virtual void func1();
+  virtual void func2();
+};
+
+class Child : public Parent {
+public:
+  virtual void func1();
+  void func3();
+}
+```
+c++ compiler는 virtual function이 하나라도 존재하는 class에 `virtual function table( vtable )`을 만든다.   
+![alt text](Images/Polymorphism/vtable.png)   
+`함수의 이름과 실제로 어떤 함수가 대응되는지 table로 저장`한다.   
+일반적인 함수는 vtable을 거치지 않고 `func3()`를 호출하면 직접 실행된다.   
+virtual function을 호출했을 때는 vtable을 통해 어떤 함수를 고를지 결정하고 해당 함수를 실행한다.   
+```cpp
+Parent* p = Parent();
+p->func1();
+```
+위 코드의 실행 과정을 살펴본다.   
+먼저 p가 Parent를 가리키는 포인터이므로, func1()의 정의를 Parent class에서 찾는다. func1()이 virtual function이므로, func1()을 직접 실행하는 것이 아니라 vtable에서 func1()에 해당하는 함수를 실행한다.   
+```cpp
+Parent* p = Child();
+p->func1();
+```
+p가 실제로는 Child 객체를 가리키기 때문에 Child 객체의 vtable을 참조하여 Child::func1()을 호출한다.   
+
+### pure virtual function과 abstract class
+`virtual function을 하나라도 포함하는 class를 가리켜 abstract class`라고 부른다.   
+```cpp
+class Animal {
+public:
+  Animal() {}
+  virtual ~Animal() {}
+  virtual void speak() = 0;
+};
+```
+```cpp
+class Dog : public Animal {
+public:
+  Dog() : Animal() {}
+  void speak override { std::cout << "왈왈" << std::endl; }
+};
+
+class Cat : public Animal {
+public:
+  Cat() : Animal() {}
+  void speak override { std::cout << "야옹" << std::endl; }
+};
+```
+Animal class의 speak()는 구현부가 정의되지 않고 `= 0`으로 처리한 virtual function이다.   
+`무엇을 하는지 정의하지 않은 함수`라는 의미이며, 이는 곧 `반드시 overriding 해야 하는 함수`이다.   
+이를 pure virtual function이라 부른다.   
+
+`pure virtual function은 구현부가 없기 때문에 이 함수를 호출하는 것은 불가능`하다.   
+```cpp
+Animal a;
+a.speak();      // 이를 막기 위함
+```
+때문에 `Animal 객체를 생성하는 것 또한 불가능`하다.   
+
+#### abstract class 특징 1
+abstract class는 해당 class를 inheritance하는 프로그래머에게 `"이 기능은 일반적인( generalize) 상황에서 만들기 힘들기 때문에 당신이 직접 구체화( specialize )되는 class에 맞춰서 만들어서 사용하라"`는 메세지를 전달한다.   
+
+Animal class의 speak는 모든 동물에 맞는 소리가 없기 때문에 Derived class에서 이를 specialize해서 사용하는 것을 강제한다.   
+
+#### abstract class 특징 2
+자신의 instance는 생성할 수 없지만, abstract class를 가리키는 pointer는 문제 없이 만들 수 있다.   
